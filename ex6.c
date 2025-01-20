@@ -536,7 +536,7 @@ void postOrderGeneric(PokemonNode *root, VisitNodeFunc visit) {
 // --------------------------------------------------------------
 void enterExistingPokedexMenu() {
     if (!ownerHead) {
-        printf("No Pokedexes available.\n");
+        printf("No existing Pokedexes.\n");
         return;
     }
 
@@ -751,7 +751,7 @@ void evolvePokemon(OwnerNode *owner) {
 
 void deletePokedex() {
     if (!ownerHead) {
-        printf("No Pokedexes available to delete.\n");
+        printf("No existing Pokedexes to delete.\n");
         return;
     }
 
@@ -980,7 +980,7 @@ void collectAll(PokemonNode *root, NodeArray *na) {
 void sortOwners() {
     if (!ownerHead || ownerHead->next == ownerHead) {
         // No owners or only one owner in the list
-        printf("Not enough owners to sort.\n");
+        printf("0 or 1 owners only => no need to sort.\n");
         return;
     }
 
@@ -1030,7 +1030,7 @@ void swapOwnerData(OwnerNode *a, OwnerNode *b) {
 
 void printOwnersCircular() {
     if (!ownerHead) {
-        printf("No owners to display.\n");
+        printf("No owners.\n");
         return;
     }
 
