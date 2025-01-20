@@ -447,7 +447,7 @@ void printOwnersCircular(void);
  * Why we made it: Ensures a squeaky-clean exit with no leftover memory.
  */
 void freeAllOwners(void);
-
+void mergePokedexes(PokemonNode *firstRoot, PokemonNode *secondRoot);
 /* ------------------------------------------------------------
    13) The Main Menu
    ------------------------------------------------------------ */
