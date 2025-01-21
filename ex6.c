@@ -1040,8 +1040,6 @@ void printOwnersCircular() {
         return;
     }
 
-    printf("\n=== Print Owners in a Direction X Times ===\n");
-
     // Get the direction
     printf("Enter direction (F or B): ");
     char direction;
