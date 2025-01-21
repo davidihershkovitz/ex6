@@ -662,11 +662,19 @@ void freePokemon(OwnerNode *owner) {
         return;
     }
 
-   printf("Enter ID to release: ");
+    printf("Enter Pokemon ID to release:\n"); // Updated prompt
     int id = readIntSafe("");
 
-    owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, id);
-    printf("Pokemon with ID %d released.\n", id);
+    // Find the Pokemon by ID
+    PokemonNode *pokemon = searchPokemonBFS(owner->pokedexRoot, id);
+    if (pokemon) {
+        // Print the correct removal message
+        printf("Removing Pokemon %s (ID %d).\n", pokemon->data->name, id);
+        owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, id);
+    } else {
+        // Handle the case when the ID is not found
+        printf("Pokemon with ID %d not found.\n", id);
+    }
 }
 
 void pokemonFight(OwnerNode *owner) {
@@ -675,10 +683,10 @@ void pokemonFight(OwnerNode *owner) {
         return;
     }
 
-    printf("Enter Pokemon ID of the first Pokemon:\n");
+    printf("Enter ID of the first Pokemon: ");
     int id1 = readIntSafe("");
 
-    printf("Enter Pokemon ID of the second Pokemon:\n");
+    printf("Enter ID of the second Pokemon: ");
     int id2 = readIntSafe("");
 
     PokemonNode *pokemon1 = searchPokemonBFS(owner->pokedexRoot, id1);
@@ -692,8 +700,9 @@ void pokemonFight(OwnerNode *owner) {
     double score1 = pokemon1->data->attack * 1.5 + pokemon1->data->hp * 1.2;
     double score2 = pokemon2->data->attack * 1.5 + pokemon2->data->hp * 1.2;
 
-    printf("Pokemon 1: %s (Score = %.2f)", pokemon1->data->name, score1);
-    printf("Pokemon 2: %s (Score = %.2f)", pokemon2->data->name, score2);
+    // Correctly formatted output with line breaks
+    printf("Pokemon 1: %s (Score = %.2f)\n", pokemon1->data->name, score1);
+    printf("Pokemon 2: %s (Score = %.2f)\n", pokemon2->data->name, score2);
 
     if (score1 > score2)
         printf("%s wins!\n", pokemon1->data->name);
@@ -705,7 +714,7 @@ void pokemonFight(OwnerNode *owner) {
 
 void evolvePokemon(OwnerNode *owner) {
     if (!owner->pokedexRoot) {
-        printf("Pokedex is empty.\n");
+        printf("Cannot evolve. Pokedex empty.\n");
         return;
     }
 
@@ -725,7 +734,7 @@ void evolvePokemon(OwnerNode *owner) {
 
     int newID = oldID + 1;
 
-    // בדיקה אם הפוקימון המפותח כבר קיים
+    // Check if the evolved form already exists
     PokemonNode *existing = searchPokemonBFS(owner->pokedexRoot, newID);
     if (existing) {
         printf("Evolved form already exists. Replacing old Pokemon.\n");
@@ -733,14 +742,14 @@ void evolvePokemon(OwnerNode *owner) {
         return;
     }
 
-    // צור את האבולוציה החדשה
+    // Create the new evolved Pokemon
     PokemonNode *newPokemon = createPokemonNode(&pokedex[newID - 1]);
     if (!newPokemon) {
         printf("Failed to create evolved Pokemon.\n");
         return;
     }
 
-    // עדכן את העץ
+    // Update the tree
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, oldID);
     owner->pokedexRoot = insertPokemonNode(owner->pokedexRoot, newPokemon);
 
@@ -1031,35 +1040,35 @@ void printOwnersCircular() {
         return;
     }
 
-    // Get the direction
-    printf("Enter direction (F or B): ");
+    printf("Enter direction (F or B):\n");
     char direction;
     scanf(" %c", &direction);
     direction = tolower(direction);
 
+    // Validate the direction input
     if (direction != 'f' && direction != 'b' && direction != 'l' && direction != 'r') {
-        printf("Invalid direction. Use 'F' for forward or 'B' for backward.\n");
+        printf("Invalid input.\n");
         return;
     }
 
-    // Get the number of prints
-    int times = readIntSafe("How many prints? ");
+    printf("How many prints?\n");
+    int times = readIntSafe("");
+
+    // Validate the number of prints
     if (times <= 0) {
         printf("Number of prints must be positive.\n");
         return;
     }
 
-    // Print owners in the chosen direction
     OwnerNode *current = ownerHead;
 
-    printf("\n");
     for (int i = 1; i <= times; i++) {
         printf("[%d] %s\n", i, current->ownerName);
 
         // Move in the chosen direction
-        if (direction == 'f') {
+        if (direction == 'f' || direction == 'r') {
             current = current->next;
-        } else if (direction == 'b') {
+        } else if (direction == 'b' || direction == 'l') {
             current = current->prev;
         }
     }
