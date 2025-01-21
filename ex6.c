@@ -346,7 +346,7 @@ PokemonNode *removePokemonByID(PokemonNode *root, int id) {
 // --------------------------------------------------------------
 
 
-void openPokedexMenu() {
+void openPokedexMenu(){
 
     // Step 1: Get owner's name
     printf("Your name: ");
