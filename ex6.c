@@ -360,7 +360,7 @@ void openPokedexMenu() {
     printf("\n=== Create a New Pokedex ===\n");
 
     // Step 1: Get owner's name
-    printf("Enter the owner's name (up to 20 characters): ");
+    printf("Your name:\n");
     char *ownerName = getDynamicInput();
 
     if (!ownerName || strlen(ownerName) > 20) {
@@ -371,13 +371,13 @@ void openPokedexMenu() {
 
     // Check if the name already exists
     if (findOwnerByName(ownerName) != NULL) {
-        printf("Owner with the name '%s' already exists.\n", ownerName);
+      printf("Owner '%s' already exists. Not creating a new Pokedex.\n", ownerName);
         free(ownerName);
         return;
     }
 
     // Step 2: Let the user pick a starter Pokémon
-    printf("\nChoose your starter Pokémon:\n");
+    printf("Choose Starter:\n");
     printf("1. Bulbasaur\n2. Charmander\n3. Squirtle\n");
 
     int starterChoice = readIntSafe("Your choice: ");
@@ -550,7 +550,7 @@ void enterExistingPokedexMenu() {
         current = current->next;
     } while (current != ownerHead);
 
-    int choice = readIntSafe("Choose a Pokedex by number: ");
+    int choice = readIntSafe("Choose a Pokedex by number:\n");
 
     if (choice < 1 || choice >= index) {
         printf("Invalid choice.\n");
@@ -605,7 +605,7 @@ void enterExistingPokedexMenu() {
 
 // מממשים פונקציות נדרשות
 void addPokemon(OwnerNode *owner) {
-    printf("Enter ID to add: ");
+    printf("Enter Pokemon ID to add:\n");
     int id = readIntSafe("");
 
     // בדיקה אם הפוקימון כבר קיים
@@ -663,7 +663,7 @@ void freePokemon(OwnerNode *owner) {
         return;
     }
 
-    printf("Enter ID of Pokemon to release: ");
+   printf("Enter Pokemon ID to release:\n");
     int id = readIntSafe("");
 
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, id);
@@ -676,10 +676,10 @@ void pokemonFight(OwnerNode *owner) {
         return;
     }
 
-    printf("Enter ID of the first Pokemon: ");
+    printf("Enter Pokemon ID of the first Pokemon:\n");
     int id1 = readIntSafe("");
 
-    printf("Enter ID of the second Pokemon: ");
+    printf("Enter Pokemon ID of the second Pokemon:\n");
     int id2 = readIntSafe("");
 
     PokemonNode *pokemon1 = searchPokemonBFS(owner->pokedexRoot, id1);
