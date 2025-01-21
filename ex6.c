@@ -1,11 +1,27 @@
+/******************
+Name: Davidi Hershkovitz
+ID: 214165417
+Assignment: ex4
+*******************/
+
 #include "ex6.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-# define INT_BUFFER 128
-# define DIRECTION_BUFFER_SIZE 3
+#define INT_BUFFER 128
+#define DIRECTION_BUFFER_SIZE 3
+// Buffer size for reading directional input (e.g., 'f' for forward or 'b' for backward),
+// including space for a newline character and null-terminator.
+#define MAX_OWNER_NAME_LENGTH 128
+// Maximum allowed length for an owner's name, including the null-terminator.
+#define BULBASAUR_INDEX 0
+// Index of Bulbasaur in the Pokedex array, representing the first starter Pokémon.
+#define CHARMANDER_INDEX 3
+// Index of Charmander in the Pokedex array, representing the second starter Pokémon.
+#define SQUIRTLE_INDEX 6
+// Index of Squirtle in the Pokedex array, representing the third starter Pokémon.
 
 // ================================================
 // Basic struct definitions from ex6.h assumed:
@@ -42,7 +58,7 @@ void trimWhitespace(char *str)
         str[--len] = '\0';
     }
 }
-
+//func that creates and return a dynamically allocated copy of a string.
 char *myStrdup(const char *src)
 {
     if (!src)
@@ -57,7 +73,7 @@ char *myStrdup(const char *src)
     strcpy(dest, src);
     return dest;
 }
-
+// func that reads the input carefully and validates it
 int readIntSafe(const char *prompt) {
     char buffer[INT_BUFFER];
     int value;
@@ -98,7 +114,7 @@ int readIntSafe(const char *prompt) {
     }
     return value;
 }
-
+// func to create the pokemon node
 PokemonNode *createPokemonNode(const PokemonData *data) {
     if (!data) return NULL;
 
@@ -126,7 +142,7 @@ PokemonNode *createPokemonNode(const PokemonData *data) {
 
     return newNode;
 }
-
+// func to set an owner
 OwnerNode *createOwner(char *ownerName, PokemonNode *starter) {
     if (!ownerName || !starter) return NULL;
 
@@ -238,6 +254,7 @@ void printPokemonNode(PokemonNode *node)
            node->data->attack,
            (node->data->CAN_EVOLVE == CAN_EVOLVE) ? "Yes" : "No");
 }
+// func that inserts a new Pokémon node into a binary search tree
 PokemonNode *insertPokemonNode(PokemonNode *root, PokemonNode *newNode) {
     if (!root) return newNode;
 
@@ -252,7 +269,7 @@ PokemonNode *insertPokemonNode(PokemonNode *root, PokemonNode *newNode) {
 
     return root;
 }
-
+// func that searches pokemon (BFS)
 PokemonNode *searchPokemonBFS(PokemonNode *root, int id) {
     if (!root) return NULL;
 
@@ -274,6 +291,7 @@ PokemonNode *searchPokemonBFS(PokemonNode *root, int id) {
     free(queue.nodes);
     return NULL;
 }
+//func that adds a new owner to a circular doubly linked list.
 void linkOwnerInCircularList(OwnerNode *newOwner) {
     if (!newOwner) return;
 
@@ -288,7 +306,7 @@ void linkOwnerInCircularList(OwnerNode *newOwner) {
     newOwner->next = ownerHead;
     ownerHead->prev = newOwner;
 }
-
+//func that will find an owner by its name.
 OwnerNode *findOwnerByName(const char *name) {
     if (!ownerHead || !name) return NULL;
 
@@ -302,7 +320,7 @@ OwnerNode *findOwnerByName(const char *name) {
 
     return NULL;
 }
-
+// remove the pokemon by choosing its id.
 PokemonNode *removePokemonByID(PokemonNode *root, int id) {
     if (!root) return NULL;
 
@@ -362,12 +380,12 @@ PokemonNode *removePokemonByID(PokemonNode *root, int id) {
 // Display Menu
 // --------------------------------------------------------------
 
-
+// func that opens the pokedex menu
 void openPokedexMenu() {
     printf("Your name: ");
     char *ownerName = getDynamicInput();
 
-    if (!ownerName || strlen(ownerName) > 20) {
+    if (!ownerName || strlen(ownerName) > MAX_OWNER_NAME_LENGTH) {
         printf("Invalid name. Please try again.\n");
         free(ownerName);
         return;
@@ -385,13 +403,13 @@ void openPokedexMenu() {
 
     switch (starterChoice) {
     case 1:
-        starterNode = createPokemonNode(&pokedex[0]);
+        starterNode = createPokemonNode(&pokedex[BULBASAUR_INDEX]);
         break;
     case 2:
-        starterNode = createPokemonNode(&pokedex[3]);
+        starterNode = createPokemonNode(&pokedex[CHARMANDER_INDEX]);
         break;
     case 3:
-        starterNode = createPokemonNode(&pokedex[6]);
+        starterNode = createPokemonNode(&pokedex[SQUIRTLE_INDEX]);
         break;
     default:
         printf("Invalid choice. Please try again.\n");
@@ -419,7 +437,7 @@ void openPokedexMenu() {
 void addNode(NodeArray *na, PokemonNode *node) {
     if (!na || !node) return;
 
-    // בדיקה אם המערך מלא
+    // check the array
     if (na->size == na->capacity) {
         na->capacity *= 2;
         na->nodes = (PokemonNode **)realloc(na->nodes, na->capacity * sizeof(PokemonNode *));
@@ -430,7 +448,9 @@ void addNode(NodeArray *na, PokemonNode *node) {
     }
     na->nodes[na->size++] = node;
 }
-
+/**************************
+funcs that handle the search
+***************************/
 void displayBFS(PokemonNode *root) {
     if (!root) {
         printf("Pokedex is empty.\n");
@@ -457,15 +477,13 @@ void displayAlphabetical(PokemonNode *root) {
         return;
     }
 
-    // אוספים את כל הצמתים
     NodeArray nodes;
     initNodeArray(&nodes, 10);
     collectAll(root, &nodes);
-
-    // ממיינים לפי שם
+// sort by name
     qsort(nodes.nodes, nodes.size, sizeof(PokemonNode *), compareByNameNode);
 
-    // מדפיסים
+    // printing
     for (int i = 0; i < nodes.size; i++) {
         printPokemonNode(nodes.nodes[i]);
     }
@@ -476,27 +494,25 @@ void displayAlphabetical(PokemonNode *root) {
 void BFSGeneric(PokemonNode *root, VisitNodeFunc visit) {
     if (!root || !visit) return;
 
-    // יצירת תור דינמי לצורך BFS
+    // creating a dynamic queue
     NodeArray queue;
     initNodeArray(&queue, 10);
 
-    // הוספת השורש לתור
+    // adding the root
     addNode(&queue, root);
 
     for (int i = 0; i < queue.size; i++) {
         PokemonNode *current = queue.nodes[i];
 
-        // מבקר את הצומת הנוכחי
         visit(current);
 
-        // הוספת ילדים לתור
         if (current->left) addNode(&queue, current->left);
         if (current->right) addNode(&queue, current->right);
     }
 
     free(queue.nodes);
 }
-
+// does exactly what the func's name says :)
 int compareByNameNode(const void *a, const void *b) {
     PokemonNode *nodeA = *(PokemonNode **)a;
     PokemonNode *nodeB = *(PokemonNode **)b;
@@ -540,7 +556,7 @@ void enterExistingPokedexMenu() {
     OwnerNode *current = ownerHead;
     int index = 1;
 
-    // מציג את כל הבעלים
+    // display all owners
     do {
         printf("%d. %s\n", index++, current->ownerName);
         current = current->next;
@@ -553,7 +569,7 @@ void enterExistingPokedexMenu() {
         return;
     }
 
-    // מוצא את הבעלים הנבחר
+    // find a specific owner
     current = ownerHead;
     for (int i = 1; i < choice; i++) {
         current = current->next;
@@ -561,7 +577,7 @@ void enterExistingPokedexMenu() {
 
     printf("\nEntering %s's Pokedex...\n", current->ownerName);
 
-    // תפריט פנימי לניהול הפוקדקס
+//pokedex menu
     int subChoice;
     do {
         printf("\n-- %s's Pokedex Menu --\n", current->ownerName);
@@ -599,19 +615,19 @@ void enterExistingPokedexMenu() {
     } while (subChoice != 6);
 }
 
-// מממשים פונקציות נדרשות
+// add pokemon func
 void addPokemon(OwnerNode *owner) {
     printf("Enter ID to add: ");
     int id = readIntSafe("");
 
-    // בדיקה אם הפוקימון כבר קיים
+    // check if the pokemon already
     PokemonNode *existing = searchPokemonBFS(owner->pokedexRoot, id);
     if (existing) {
         printf("Pokemon with ID %d is already in the Pokedex. No changes made.\n", id);
         return;
     }
 
-    // יצירת פוקימון חדש והוספתו לעץ
+    // creating new pokemon to the tree
     PokemonNode *newNode = createPokemonNode(&pokedex[id - 1]);
     owner->pokedexRoot = insertPokemonNode(owner->pokedexRoot, newNode);
     printf("Pokemon %s (ID %d) added.\n", pokedex[id - 1].name, id);
@@ -708,7 +724,7 @@ void pokemonFight(OwnerNode *owner) {
     else
         printf("It's a tie!\n");
 }
-
+// func that evolves the pokemon
 void evolvePokemon(OwnerNode *owner) {
     if (!owner->pokedexRoot) {
         printf("Cannot evolve. Pokedex empty.\n");
@@ -753,7 +769,7 @@ void evolvePokemon(OwnerNode *owner) {
     printf("Pokemon evolved from %s (ID %d) to %s (ID %d).\n",
            pokemon->data->name, oldID, newPokemon->data->name, newID);
 }
-
+// func to delete the pokedex
 void deletePokedex() {
     if (!ownerHead) {
         printf("No existing Pokedexes to delete.\n");
@@ -1030,7 +1046,7 @@ void swapOwnerData(OwnerNode *a, OwnerNode *b) {
     a->pokedexRoot = b->pokedexRoot;
     b->pokedexRoot = tempPokedex;
 }
-
+//print the circular owner list
 void printOwnersCircular() {
     if (!ownerHead) {
         printf("No owners.\n");
@@ -1058,6 +1074,7 @@ void printOwnersCircular() {
         }
     }
 }
+// func that frees all owners
 void freeAllOwners() {
     if (!ownerHead) return;
 
@@ -1070,7 +1087,7 @@ void freeAllOwners() {
 
     ownerHead = NULL;
 }
-
+// practically the main menu func
 void mainMenu() {
     int choice;
     do {
