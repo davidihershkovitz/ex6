@@ -662,7 +662,7 @@ void freePokemon(OwnerNode *owner) {
         return;
     }
 
-    printf("Enter Pokemon ID to release:\n"); // Updated prompt
+    printf("Enter Pokemon ID to release:"); // Updated prompt
     int id = readIntSafe("");
 
     // Find the Pokemon by ID
@@ -1040,28 +1040,31 @@ void printOwnersCircular() {
         return;
     }
 
-    printf("Enter direction (F or B):\n");
+    printf("Enter direction (F or B): ");
     char direction;
     scanf(" %c", &direction);
-    direction = tolower(direction);
+    direction = tolower(direction); // Normalize to lowercase for consistency
 
-    // Validate the direction input
-    if (direction != 'f' && direction != 'b' && direction != 'l' && direction != 'r') {
+    // Validate direction input
+    while (direction != 'f' && direction != 'b' && direction != 'l' && direction != 'r') {
         printf("Invalid input.\n");
-        return;
+        printf("Enter direction (F or B): ");
+        scanf(" %c", &direction);
+        direction = tolower(direction);
     }
 
-    printf("How many prints?\n");
+    // Get the number of prints
+    printf("How many prints? ");
     int times = readIntSafe("");
-
-    // Validate the number of prints
     if (times <= 0) {
         printf("Number of prints must be positive.\n");
         return;
     }
 
+    // Start printing in the specified direction
     OwnerNode *current = ownerHead;
 
+    printf("\n");
     for (int i = 1; i <= times; i++) {
         printf("[%d] %s\n", i, current->ownerName);
 
