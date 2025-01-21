@@ -306,39 +306,56 @@ OwnerNode *findOwnerByName(const char *name) {
 PokemonNode *removePokemonByID(PokemonNode *root, int id) {
     if (!root) return NULL;
 
+    // Traverse the tree to find the node to delete
     if (id < root->data->id) {
         root->left = removePokemonByID(root->left, id);
-    } else if (id > root->data->id) {
-        root->right = removePokemonByID(root->right, id);
-    } else {
-        // Node to delete found
-        PokemonNode *temp;
-        if (!root->left) {
-            temp = root->right;
-            freePokemonNode(root); // Release the node
-            return temp;
-        } else if (!root->right) {
-            temp = root->left;
-            freePokemonNode(root); // Release the node
-            return temp;
-        }
-
-        // Node with two children: replace with in-order successor
-        temp = root->right;
-        while (temp && temp->left) temp = temp->left;
-
-        // Replace data and remove the successor node
-        free(root->data->name);  // Free old name
-        root->data->name = myStrdup(temp->data->name); // Copy new name
-        root->data->id = temp->data->id;
-        root->data->TYPE = temp->data->TYPE;
-        root->data->hp = temp->data->hp;
-        root->data->attack = temp->data->attack;
-        root->data->CAN_EVOLVE = temp->data->CAN_EVOLVE;
-
-        root->right = removePokemonByID(root->right, temp->data->id);
+        return root;
     }
 
+    if (id > root->data->id) {
+        root->right = removePokemonByID(root->right, id);
+        return root;
+    }
+
+    // Node to delete found
+    if (!root->left && !root->right) {
+        // Case 1: Node has no children (leaf node)
+        freePokemonNode(root);
+        return NULL;
+    }
+
+    if (!root->left) {
+        // Case 2: Node has only a right child
+        PokemonNode *temp = root->right;
+        freePokemonNode(root);
+        return temp;
+    }
+
+    if (!root->right) {
+        // Case 3: Node has only a left child
+        PokemonNode *temp = root->left;
+        freePokemonNode(root);
+        return temp;
+    }
+
+    // Case 4: Node has two children
+    // Find the in-order successor (smallest in the right subtree)
+    PokemonNode *successor = root->right;
+    while (successor->left) {
+        successor = successor->left;
+    }
+
+    // Replace root's data with the successor's data
+    free(root->data->name);
+    root->data->name = myStrdup(successor->data->name);
+    root->data->id = successor->data->id;
+    root->data->TYPE = successor->data->TYPE;
+    root->data->hp = successor->data->hp;
+    root->data->attack = successor->data->attack;
+    root->data->CAN_EVOLVE = successor->data->CAN_EVOLVE;
+
+    // Remove the successor node
+    root->right = removePokemonByID(root->right, successor->data->id);
     return root;
 }
 // --------------------------------------------------------------
@@ -346,9 +363,7 @@ PokemonNode *removePokemonByID(PokemonNode *root, int id) {
 // --------------------------------------------------------------
 
 
-void openPokedexMenu(){
-
-    // Step 1: Get owner's name
+void openPokedexMenu() {
     printf("Your name: ");
     char *ownerName = getDynamicInput();
 
@@ -358,29 +373,25 @@ void openPokedexMenu(){
         return;
     }
 
-    // Check if the name already exists
     if (findOwnerByName(ownerName) != NULL) {
-      printf("Owner '%s' already exists. Not creating a new Pokedex.\n", ownerName);
+        printf("Owner '%s' already exists. Not creating a new Pokedex.\n", ownerName);
         free(ownerName);
         return;
     }
 
-    // Step 2: Let the user pick a starter Pokémon
-    printf("Choose Starter:\n");
-    printf("1. Bulbasaur\n2. Charmander\n3. Squirtle\n");
-
+    printf("Choose Starter:\n1. Bulbasaur\n2. Charmander\n3. Squirtle\n");
     int starterChoice = readIntSafe("Your choice: ");
     PokemonNode *starterNode = NULL;
 
     switch (starterChoice) {
     case 1:
-        starterNode = createPokemonNode(&pokedex[0]); // Bulbasaur
+        starterNode = createPokemonNode(&pokedex[0]);
         break;
     case 2:
-        starterNode = createPokemonNode(&pokedex[3]); // Charmander
+        starterNode = createPokemonNode(&pokedex[3]);
         break;
     case 3:
-        starterNode = createPokemonNode(&pokedex[6]); // Squirtle
+        starterNode = createPokemonNode(&pokedex[6]);
         break;
     default:
         printf("Invalid choice. Please try again.\n");
@@ -394,7 +405,6 @@ void openPokedexMenu(){
         return;
     }
 
-    // Step 3: Create the OwnerNode and link it to the circular list
     OwnerNode *newOwner = createOwner(ownerName, starterNode);
     if (!newOwner) {
         printf("Failed to create the new owner.\n");
@@ -404,10 +414,7 @@ void openPokedexMenu(){
     }
 
     linkOwnerInCircularList(newOwner);
-
-    // Step 4: Confirmation
-    printf("New Pokedex created for %s with starter %s.\n",
-           ownerName, starterNode->data->name);
+    printf("New Pokedex created for %s with starter %s.\n", ownerName, starterNode->data->name);
 }
 void addNode(NodeArray *na, PokemonNode *node) {
     if (!na || !node) return;
@@ -1051,6 +1058,18 @@ void printOwnersCircular() {
         }
     }
 }
+void freeAllOwners() {
+    if (!ownerHead) return;
+
+    OwnerNode *current = ownerHead;
+    do {
+        OwnerNode *next = current->next;
+        freeOwnerNode(current);
+        current = next;
+    } while (current != ownerHead);
+
+    ownerHead = NULL;
+}
 
 void mainMenu() {
     int choice;
@@ -1092,6 +1111,7 @@ void mainMenu() {
             printf("Invalid choice.\n");
         }
     } while (choice != 7);
+    freeAllOwners();
 }
 
 int main() {
