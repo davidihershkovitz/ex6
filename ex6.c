@@ -662,7 +662,7 @@ void freePokemon(OwnerNode *owner) {
         return;
     }
 
-    printf("Enter Pokemon ID to release:"); // Updated prompt
+    printf("Enter Pokemon ID to release: "); // Updated prompt
     int id = readIntSafe("");
 
     // Find the Pokemon by ID
@@ -1040,28 +1040,36 @@ void printOwnersCircular() {
         return;
     }
 
+    // Get the direction
     printf("Enter direction (F or B): ");
     char direction;
-    scanf(" %c", &direction);
-    direction = tolower(direction); // Normalize to lowercase for consistency
+    int validDirection = 0;
 
-    // Validate direction input
-    while (direction != 'f' && direction != 'b' && direction != 'l' && direction != 'r') {
-        printf("Invalid input.\n");
-        printf("Enter direction (F or B): ");
-        scanf(" %c", &direction);
+    while (!validDirection) {
+        // Read a single character
+        if (scanf(" %c", &direction) != 1) {
+            printf("Invalid input.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            printf("Enter direction (F or B): ");
+            continue;
+        }
+
         direction = tolower(direction);
+        if (direction == 'f' || direction == 'b') {
+            validDirection = 1; // Valid input
+        } else {
+            printf("Invalid input.\nEnter direction (F or B): ");
+        }
     }
 
     // Get the number of prints
-    printf("How many prints? ");
-    int times = readIntSafe("");
+    int times = readIntSafe("How many prints? ");
     if (times <= 0) {
         printf("Number of prints must be positive.\n");
         return;
     }
 
-    // Start printing in the specified direction
+    // Print owners in the chosen direction
     OwnerNode *current = ownerHead;
 
     printf("\n");
@@ -1069,9 +1077,9 @@ void printOwnersCircular() {
         printf("[%d] %s\n", i, current->ownerName);
 
         // Move in the chosen direction
-        if (direction == 'f' || direction == 'r') {
+        if (direction == 'f') {
             current = current->next;
-        } else if (direction == 'b' || direction == 'l') {
+        } else if (direction == 'b') {
             current = current->prev;
         }
     }
