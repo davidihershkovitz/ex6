@@ -357,10 +357,9 @@ PokemonNode *removePokemonByID(PokemonNode *root, int id) {
 
 
 void openPokedexMenu() {
-    printf("\n=== Create a New Pokedex ===\n");
 
     // Step 1: Get owner's name
-    printf("Your name:\n");
+    printf("Your name: ");
     char *ownerName = getDynamicInput();
 
     if (!ownerName || strlen(ownerName) > 20) {
@@ -417,7 +416,7 @@ void openPokedexMenu() {
     linkOwnerInCircularList(newOwner);
 
     // Step 4: Confirmation
-    printf("\nNew Pokedex created for '%s' with starter Pokémon '%s'!\n",
+    printf("New Pokedex created for %s with starter %s!\n",
            ownerName, starterNode->data->name);
 }
 void addNode(NodeArray *na, PokemonNode *node) {
@@ -605,7 +604,7 @@ void enterExistingPokedexMenu() {
 
 // מממשים פונקציות נדרשות
 void addPokemon(OwnerNode *owner) {
-    printf("Enter Pokemon ID to add:\n");
+    printf("Enter Pokemon ID to add: ");
     int id = readIntSafe("");
 
     // בדיקה אם הפוקימון כבר קיים
@@ -663,7 +662,7 @@ void freePokemon(OwnerNode *owner) {
         return;
     }
 
-   printf("Enter Pokemon ID to release:\n");
+   printf("Enter Pokemon ID to release: ");
     int id = readIntSafe("");
 
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, id);
@@ -693,8 +692,8 @@ void pokemonFight(OwnerNode *owner) {
     double score1 = pokemon1->data->attack * 1.5 + pokemon1->data->hp * 1.2;
     double score2 = pokemon2->data->attack * 1.5 + pokemon2->data->hp * 1.2;
 
-    printf("Pokemon 1: %s (Score = %.2f)\n", pokemon1->data->name, score1);
-    printf("Pokemon 2: %s (Score = %.2f)\n", pokemon2->data->name, score2);
+    printf("Pokemon 1: %s (Score = %.2f)", pokemon1->data->name, score1);
+    printf("Pokemon 2: %s (Score = %.2f)", pokemon2->data->name, score2);
 
     if (score1 > score2)
         printf("%s wins!\n", pokemon1->data->name);
@@ -755,7 +754,6 @@ void deletePokedex() {
         return;
     }
 
-    printf("\n=== Delete a Pokedex ===\n");
 
     // Display all owners
     OwnerNode *current = ownerHead;
@@ -853,7 +851,6 @@ void mergePokedexMenu() {
         return;
     }
 
-    printf("\n=== Merge Pokedexes ===\n");
 
     // Get the first owner's name
     printf("Enter name of first owner: ");
@@ -984,8 +981,6 @@ void sortOwners() {
         return;
     }
 
-    printf("\n=== Sorting Owners by Name ===\n");
-
     int swapped;
     OwnerNode *current;
     OwnerNode *last = NULL;
@@ -1006,7 +1001,7 @@ void sortOwners() {
         last = current;
     } while (swapped);
 
-    printf("Owners sorted alphabetically.\n");
+    printf("Owners sorted by name.\n");
 }
 
 /**
@@ -1034,15 +1029,13 @@ void printOwnersCircular() {
         return;
     }
 
-    printf("\n=== Print Owners in a Direction X Times ===\n");
-
     // Get the direction
     printf("Enter direction (F or B): ");
     char direction;
     scanf(" %c", &direction);
     direction = tolower(direction);
 
-    if (direction != 'f' && direction != 'b') {
+    if (direction != 'f' && direction != 'b' && direction != 'l' && direction != 'r') {
         printf("Invalid direction. Use 'F' for forward or 'B' for backward.\n");
         return;
     }
