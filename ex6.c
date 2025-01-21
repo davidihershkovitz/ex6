@@ -1040,38 +1040,20 @@ void printOwnersCircular() {
         return;
     }
 
+    printf("\n=== Print Owners in a Direction X Times ===\n");
+
     // Get the direction
     printf("Enter direction (F or B): ");
     char direction;
-    int validDirection = 0;
-
-    while (!validDirection) {
-        // Read a single character
-        if (scanf(" %c", &direction) != 1) {
-            printf("Invalid input.\n");
-            while (getchar() != '\n'); // Clear input buffer
-            printf("Enter direction (F or B): ");
-            continue;
-        }
-
-        direction = tolower(direction);
-        if (direction == 'f' || direction == 'b') {
-            validDirection = 1; // Valid input
-        } else {
-            printf("Invalid input.\nEnter direction (F or B): ");
-        }
-    }
+    scanf(" %c", &direction);
+    direction = tolower(direction); // Normalize to lowercase for uniform comparison
 
     // Get the number of prints
-    int times = readIntSafe("How many prints? ");
-    if (times <= 0) {
-        printf("Number of prints must be positive.\n");
-        return;
-    }
+    printf("How many prints? ");
+    int times;
+    scanf("%d", &times);
 
-    // Print owners in the chosen direction
     OwnerNode *current = ownerHead;
-
     printf("\n");
     for (int i = 1; i <= times; i++) {
         printf("[%d] %s\n", i, current->ownerName);
