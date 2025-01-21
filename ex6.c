@@ -1052,7 +1052,6 @@ void printOwnersCircular() {
     scanf("%d", &times);
 
     OwnerNode *current = ownerHead;
-    printf("\n");
     for (int i = 1; i <= times; i++) {
         printf("[%d] %s\n", i, current->ownerName);
 
