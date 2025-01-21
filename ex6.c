@@ -416,7 +416,7 @@ void openPokedexMenu() {
     linkOwnerInCircularList(newOwner);
 
     // Step 4: Confirmation
-    printf("New Pokedex created for %s with starter %s!\n",
+    printf("New Pokedex created for %s with starter %s.\n",
            ownerName, starterNode->data->name);
 }
 void addNode(NodeArray *na, PokemonNode *node) {
@@ -604,7 +604,7 @@ void enterExistingPokedexMenu() {
 
 // מממשים פונקציות נדרשות
 void addPokemon(OwnerNode *owner) {
-    printf("Enter Pokemon ID to add: ");
+    printf("Enter ID to add: ");
     int id = readIntSafe("");
 
     // בדיקה אם הפוקימון כבר קיים
@@ -662,7 +662,7 @@ void freePokemon(OwnerNode *owner) {
         return;
     }
 
-   printf("Enter Pokemon ID to release: ");
+   printf("Enter ID to release: ");
     int id = readIntSafe("");
 
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, id);
@@ -754,6 +754,7 @@ void deletePokedex() {
         return;
     }
 
+    printf("\n=== Delete a Pokedex ===\n");
 
     // Display all owners
     OwnerNode *current = ownerHead;
@@ -851,6 +852,7 @@ void mergePokedexMenu() {
         return;
     }
 
+    printf("\n=== Merge Pokedexes ===\n");
 
     // Get the first owner's name
     printf("Enter name of first owner: ");
