@@ -5,6 +5,7 @@
 #include <string.h>
 
 # define INT_BUFFER 128
+# define DIRECTION_BUFFER_SIZE 3
 
 // ================================================
 // Basic struct definitions from ex6.h assumed:
@@ -57,53 +58,42 @@ char *myStrdup(const char *src)
     return dest;
 }
 
-int readIntSafe(const char *prompt)
-{
+int readIntSafe(const char *prompt) {
     char buffer[INT_BUFFER];
     int value;
     int success = 0;
 
-    while (!success)
-    {
+    while (!success) {
         printf("%s", prompt);
 
-        // If we fail to read, treat it as invalid
-        if (!fgets(buffer, sizeof(buffer), stdin))
-        {
+        // Read input
+        if (!fgets(buffer, sizeof(buffer), stdin)) {
             printf("Invalid input.\n");
-            clearerr(stdin);
+            clearerr(stdin); // Clear the input stream error flag
             continue;
         }
 
-        // 1) Strip any trailing \r or \n
-        //    so "123\r\n" becomes "123"
+        // Remove trailing newline or carriage return
         size_t len = strlen(buffer);
-        if (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r'))
+        if (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
             buffer[--len] = '\0';
-        if (len > 0 && (buffer[len - 1] == '\r' || buffer[len - 1] == '\n'))
-            buffer[--len] = '\0';
+        }
 
-        // 2) Check if empty after stripping
-        if (len == 0)
-        {
+        // If the input is empty after trimming
+        if (len == 0) {
             printf("Invalid input.\n");
             continue;
         }
 
-        // 3) Attempt to parse integer with strtol
+        // Parse the input as an integer
         char *endptr;
         value = (int)strtol(buffer, &endptr, 10);
 
-        // If endptr didn't point to the end => leftover chars => invalid
-        // or if buffer was something non-numeric
-        if (*endptr != '\0')
-        {
+        // If the entire input was not consumed, it's invalid
+        if (endptr == buffer || *endptr != '\0') {
             printf("Invalid input.\n");
-        }
-        else
-        {
-            // We got a valid integer
-            success = 1;
+        } else {
+            success = 1; // Valid integer input
         }
     }
     return value;
@@ -1042,14 +1032,12 @@ void printOwnersCircular() {
 
     // Get the direction
     printf("Enter direction (F or B): ");
-    char direction;
-    scanf(" %c", &direction);
-    direction = tolower(direction); // Normalize to lowercase for uniform comparison
+    char directionBuffer[DIRECTION_BUFFER_SIZE];
+    fgets(directionBuffer, sizeof(directionBuffer), stdin);
+    char direction = tolower(directionBuffer[0]); // Normalize to lowercase
 
     // Get the number of prints
-    printf("How many prints? ");
-    int times;
-    scanf("%d", &times);
+    int times = readIntSafe("How many prints? ");
 
     OwnerNode *current = ownerHead;
     for (int i = 1; i <= times; i++) {
