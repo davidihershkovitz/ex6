@@ -12,7 +12,7 @@ Assignment: ex4
 
 #define INT_BUFFER 128
 #define DIRECTION_BUFFER_SIZE 3
-// Buffer size for reading directional input (e.g., 'f' for forward or 'b' for backward),
+// Buffer size for reading directional input.
 // including space for a newline character and null-terminator.
 #define MAX_OWNER_NAME_LENGTH 128
 // Maximum allowed length for an owner's name, including the null-terminator.
@@ -22,6 +22,9 @@ Assignment: ex4
 // Index of Charmander in the Pokedex array, representing the second starter Pokémon.
 #define SQUIRTLE_INDEX 6
 // Index of Squirtle in the Pokedex array, representing the third starter Pokémon.
+#define INITIAL_NODE_ARRAY_CAPACITY 10
+
+
 
 // ================================================
 // Basic struct definitions from ex6.h assumed:
@@ -103,7 +106,7 @@ int readIntSafe(const char *prompt) {
 
         // Parse the input as an integer
         char *endptr;
-        value = (int)strtol(buffer, &endptr, 10);
+        value = (int)strtol(buffer, &endptr, INITIAL_NODE_ARRAY_CAPACITY);
 
         // If the entire input was not consumed, it's invalid
         if (endptr == buffer || *endptr != '\0') {
@@ -274,7 +277,7 @@ PokemonNode *searchPokemonBFS(PokemonNode *root, int id) {
     if (!root) return NULL;
 
     NodeArray queue;
-    initNodeArray(&queue, 10);
+    initNodeArray(&queue, INITIAL_NODE_ARRAY_CAPACITY);
     addNode(&queue, root);
 
     for (int i = 0; i < queue.size; i++) {
@@ -478,7 +481,7 @@ void displayAlphabetical(PokemonNode *root) {
     }
 
     NodeArray nodes;
-    initNodeArray(&nodes, 10);
+    initNodeArray(&nodes, INITIAL_NODE_ARRAY_CAPACITY);
     collectAll(root, &nodes);
 // sort by name
     qsort(nodes.nodes, nodes.size, sizeof(PokemonNode *), compareByNameNode);
@@ -496,7 +499,7 @@ void BFSGeneric(PokemonNode *root, VisitNodeFunc visit) {
 
     // creating a dynamic queue
     NodeArray queue;
-    initNodeArray(&queue, 10);
+    initNodeArray(&queue, INITIAL_NODE_ARRAY_CAPACITY);
 
     // adding the root
     addNode(&queue, root);
@@ -747,14 +750,6 @@ void evolvePokemon(OwnerNode *owner) {
 
     int newID = oldID + 1;
 
-    // Check if the evolved form already exists
-    PokemonNode *existing = searchPokemonBFS(owner->pokedexRoot, newID);
-    if (existing) {
-        printf("Evolved form already exists. Replacing old Pokemon.\n");
-        owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, oldID);
-        return;
-    }
-
     // Create the new evolved Pokemon
     PokemonNode *newPokemon = createPokemonNode(&pokedex[newID - 1]);
     if (!newPokemon) {
@@ -762,7 +757,7 @@ void evolvePokemon(OwnerNode *owner) {
         return;
     }
 
-    // Update the tree
+    // Remove the old Pokemon and insert the new one
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, oldID);
     owner->pokedexRoot = insertPokemonNode(owner->pokedexRoot, newPokemon);
 
@@ -923,7 +918,7 @@ void mergePokedexes(PokemonNode *firstRoot, PokemonNode *secondRoot) {
 
     // Perform BFS on the second BST
     NodeArray nodes;
-    initNodeArray(&nodes, 10);
+    initNodeArray(&nodes, INITIAL_NODE_ARRAY_CAPACITY);
     collectAll(secondRoot, &nodes);
 
     for (int i = 0; i < nodes.size; i++) {
