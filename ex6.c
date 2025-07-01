@@ -877,24 +877,19 @@ void mergePokedexMenu() {
 
     printf("\n=== Merge Pokedexes ===\n");
 
-    // Get the first owner's name
+    // Always ask for both names first
     printf("Enter name of first owner: ");
     char *firstOwnerName = getDynamicInput();
 
-    OwnerNode *firstOwner = findOwnerByName(firstOwnerName);
-    if (!firstOwner) {
-        printf("Owner '%s' not found.\n", firstOwnerName);
-        free(firstOwnerName);
-        return;
-    }
-
-    // Get the second owner's name
     printf("Enter name of second owner: ");
     char *secondOwnerName = getDynamicInput();
 
+    OwnerNode *firstOwner = findOwnerByName(firstOwnerName);
     OwnerNode *secondOwner = findOwnerByName(secondOwnerName);
-    if (!secondOwner) {
-        printf("Owner '%s' not found.\n", secondOwnerName);
+
+    // Handle not found
+    if (!firstOwner || !secondOwner) {
+        printf("One or both owners not found.\n");
         free(firstOwnerName);
         free(secondOwnerName);
         return;
@@ -902,10 +897,10 @@ void mergePokedexMenu() {
 
     printf("Merging %s and %s...\n", firstOwnerName, secondOwnerName);
 
-    // Merge the second owner's Pokedex into the first owner's Pokedex
+    // Merge the second owner's Pokedex into the first owner's
     mergePokedexes(firstOwner->pokedexRoot, secondOwner->pokedexRoot);
 
-    // Remove the second owner
+    // Remove the second owner from the list
     removeOwnerFromCircularList(secondOwner);
 
     printf("Merge completed.\nOwner '%s' has been removed after merging.\n", secondOwnerName);
