@@ -757,6 +757,9 @@ void evolvePokemon(OwnerNode *owner) {
         return;
     }
 
+    // Print removal message before removal
+    printf("Removing Pokemon %s (ID %d).\n", pokemon->data->name, oldID);
+
     // Remove the old Pokemon and insert the new one
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, oldID);
     owner->pokedexRoot = insertPokemonNode(owner->pokedexRoot, newPokemon);
