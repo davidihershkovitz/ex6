@@ -757,15 +757,18 @@ void evolvePokemon(OwnerNode *owner) {
         return;
     }
 
-    // Print removal message before removal
-    printf("Removing Pokemon %s (ID %d).\n", pokemon->data->name, oldID);
+    // Save old name before freeing
+    char *oldName = myStrdup(pokemon->data->name);
 
-    // Remove the old Pokemon and insert the new one
+    printf("Removing Pokemon %s (ID %d).\n", oldName, oldID);
+
     owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, oldID);
     owner->pokedexRoot = insertPokemonNode(owner->pokedexRoot, newPokemon);
 
     printf("Pokemon evolved from %s (ID %d) to %s (ID %d).\n",
-           pokemon->data->name, oldID, newPokemon->data->name, newID);
+           oldName, oldID, newPokemon->data->name, newID);
+
+    free(oldName); // cleanup
 }
 // func to delete the pokedex
 void deletePokedex() {
