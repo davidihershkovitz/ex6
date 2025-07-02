@@ -11,8 +11,8 @@ Assignment: ex4
 #include <string.h>
 
 #define INT_BUFFER 128
-#define DIRECTION_BUFFER_SIZE 3
 // Buffer size for reading directional input.
+#define DIRECTION_BUFFER_SIZE 3
 // including space for a newline character and null-terminator.
 #define MAX_OWNER_NAME_LENGTH 128
 // Maximum allowed length for an owner's name, including the null-terminator.
@@ -41,7 +41,7 @@ Assignment: ex4
 
 void trimWhitespace(char *str)
 {
-    // Remove leading spaces/tabs/\r
+    // Remove leading spaces/tabs
     int start = 0;
     while (str[start] == ' ' || str[start] == '\t' || str[start] == '\r')
         start++;
@@ -54,7 +54,7 @@ void trimWhitespace(char *str)
         str[idx] = '\0';
     }
 
-    // Remove trailing spaces/tabs/\r
+    // Remove trailing spaces/tabs
     int len = (int)strlen(str);
     while (len > 0 && (str[len - 1] == ' ' || str[len - 1] == '\t' || str[len - 1] == '\r'))
     {
@@ -157,7 +157,7 @@ OwnerNode *createOwner(char *ownerName, PokemonNode *starter) {
 
     newOwner->ownerName = ownerName;
     newOwner->pokedexRoot = starter;
-    newOwner->next = newOwner->prev = newOwner; // Self-loop for circular list
+    newOwner->next = newOwner->prev = newOwner;
 
     return newOwner;
 }
@@ -360,7 +360,7 @@ PokemonNode *removePokemonByID(PokemonNode *root, int id) {
     }
 
     // Case 4: Node has two children
-    // Find the in-order successor (smallest in the right subtree)
+    // Find the in-order successor
     PokemonNode *successor = root->right;
     while (successor->left) {
         successor = successor->left;
@@ -692,7 +692,7 @@ void freePokemon(OwnerNode *owner) {
         printf("No Pokemon with ID %d found.\n", id);
     }
 }
-
+//
 void pokemonFight(OwnerNode *owner) {
     if (!owner->pokedexRoot) {
         printf("Pokedex is empty.\n");
@@ -1109,7 +1109,7 @@ void mainMenu() {
             deletePokedex();
             break;
         case 4:
-            mergePokedexMenu(); // Task 4
+            mergePokedexMenu();
             break;
         case 5:
             sortOwners();
