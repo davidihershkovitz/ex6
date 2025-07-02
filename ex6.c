@@ -689,7 +689,7 @@ void freePokemon(OwnerNode *owner) {
         owner->pokedexRoot = removePokemonByID(owner->pokedexRoot, id);
     } else {
         // Handle the case when the ID is not found
-        printf("Pokemon with ID %d not found.\n", id);
+        printf("No Pokemon with ID %d found.\n", id);
     }
 }
 
